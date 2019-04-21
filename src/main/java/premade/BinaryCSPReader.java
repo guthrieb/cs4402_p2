@@ -12,7 +12,7 @@ public final class BinaryCSPReader {
   private StreamTokenizer in ;
 
   /**
-   * Main (for testing)
+   * ResultWriter (for testing)
    */
   public static void main(String[] args) {
     if (args.length != 1) {

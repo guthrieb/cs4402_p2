@@ -1,7 +1,6 @@
 package problem_domain;
 
 import premade.BinaryTuple;
-import preproc.VarSpaceBuilder;
 
 import java.util.*;
 
@@ -37,7 +36,7 @@ public class VariableSpace {
             unassignedVars.remove(minSizeVar);
             return minSizeVar.varNo;
         } else {
-            throw new NoAssignableVars("No vars assignable");
+            throw new NoAssignableVars("No vars assignable", this);
         }
     }
 
@@ -48,7 +47,7 @@ public class VariableSpace {
             minSizeVar.inverseAssign();
             return minSizeVar.varNo;
         } else {
-            throw new NoAssignableVars("No vars assignable");
+            throw new NoAssignableVars("No vars assignable", this);
         }
     }
 
@@ -157,5 +156,9 @@ public class VariableSpace {
             System.out.print(vars.get(i).domain);
 
         }
+    }
+
+    public HashMap<Integer, Variable> getVariables() {
+        return vars;
     }
 }

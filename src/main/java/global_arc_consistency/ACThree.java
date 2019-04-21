@@ -3,6 +3,7 @@ package global_arc_consistency;
 import arc_checker.ArcConsistencyMaintainer;
 import arc_checker.EmptyDomainException;
 import branching.TwoWayBranching;
+import meta.Results;
 import premade.BinaryTuple;
 import problem_domain.VariableSpace;
 
@@ -10,7 +11,7 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class ACThree {
-    public static VariableSpace performArcConsistency(VariableSpace variableSpace, int var, boolean fc) {
+    public static Results performArcConsistency(VariableSpace variableSpace, int var, boolean fc, Results results) {
 
         Queue<Pair> toCheck = buildQueue(variableSpace, var);
 
@@ -26,7 +27,7 @@ public class ACThree {
                 }
             }
 
-            return TwoWayBranching.branch(variableSpace, fc);
+            return TwoWayBranching.branch(variableSpace, fc, results);
         } catch (EmptyDomainException ignored) {}
 
         return null;
@@ -48,21 +49,19 @@ public class ACThree {
 
     private static Queue<Pair> buildQueue(VariableSpace variableSpace, int var) {
         Queue<Pair> pairs = new LinkedBlockingDeque<>();
-
-        HashMap<Integer, List<BinaryTuple>> integerListHashMap = variableSpace.getConstraints().get(var);
-
-        for(int var2 : integerListHashMap.keySet()) {
-            pairs.add(new Pair(var2, var));
-        }
 //
-//        HashMap<Integer, HashMap<Integer, List<BinaryTuple>>> constraints = variableSpace.getConstraints();
 //        HashMap<Integer, List<BinaryTuple>> integerListHashMap = variableSpace.getConstraints().get(var);
 //
-//        for(Map.Entry<Integer, HashMap<Integer, List<BinaryTuple>>> constraintEntry : constraints.entrySet()) {
-//            for(Map.Entry<Integer, List<BinaryTuple>> subConstraintEntry : constraintEntry.getValue().entrySet()) {
-//                pairs.add(new Pair(constraintEntry.getKey(), subConstraintEntry.getKey()));
-//            }
+//        for(int var2 : integerListHashMap.keySet()) {
+//            pairs.add(new Pair(var2, var));
 //        }
+
+        HashMap<Integer, HashMap<Integer, List<BinaryTuple>>> constraints = variableSpace.getConstraints();
+        for(Map.Entry<Integer, HashMap<Integer, List<BinaryTuple>>> constraintEntry : constraints.entrySet()) {
+            for(Map.Entry<Integer, List<BinaryTuple>> subConstraintEntry : constraintEntry.getValue().entrySet()) {
+                pairs.add(new Pair(constraintEntry.getKey(), subConstraintEntry.getKey()));
+            }
+        }
         return pairs;
     }
 

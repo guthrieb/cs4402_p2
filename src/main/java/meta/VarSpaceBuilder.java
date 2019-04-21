@@ -1,4 +1,4 @@
-package preproc;
+package meta;
 
 import premade.BinaryCSP;
 import premade.BinaryCSPReader;
@@ -18,9 +18,7 @@ public class VarSpaceBuilder {
         HashMap<Integer, HashMap<Integer, List<BinaryTuple>>> constraints = getConstraints(csp);
 
 
-        VariableSpace variableSpace = new VariableSpace(variables, constraints);
-
-        return variableSpace;
+        return new VariableSpace(variables, constraints);
     }
 
     private static List<Variable> getVariables(BinaryCSP csp) {

@@ -3,6 +3,7 @@ package forward_checking;
 import arc_checker.ArcConsistencyMaintainer;
 import arc_checker.EmptyDomainException;
 import branching.TwoWayBranching;
+import meta.Results;
 import premade.BinaryTuple;
 import problem_domain.VariableSpace;
 
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ForwardChecker {
-    public static VariableSpace performForwardChecking(VariableSpace space, int var, boolean fc) {
+    public static Results performForwardChecking(VariableSpace space, int var, boolean fc, Results results) {
         HashMap<Integer, HashMap<Integer, List<BinaryTuple>>> constraints = space.getConstraints();
         Set<Integer> varsToCheckAgainst = constraints.get(var).keySet();
 
@@ -21,14 +22,8 @@ public class ForwardChecker {
                 arcConsistencyMaintainer.revise(toCheck, var, space);
             }
 
-            VariableSpace branch = TwoWayBranching.branch(space, fc);
-
-            if(branch != null) {
-                return branch;
-            }
-        } catch (EmptyDomainException ignored) {
-
-        }
+            return TwoWayBranching.branch(space, fc, results);
+        } catch (EmptyDomainException ignored) {}
 
         return null;
     }

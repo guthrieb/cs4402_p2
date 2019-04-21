@@ -1,31 +1,50 @@
 package branching;
 
+import arc_checker.ArcConsistencyMaintainer;
+import arc_checker.EmptyDomainException;
 import forward_checking.ForwardChecker;
 import global_arc_consistency.ACThree;
-import preproc.Main;
+import meta.Results;
+import premade.BinaryTuple;
 import problem_domain.NoAssignableVars;
 import problem_domain.VariableSpace;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TwoWayBranching {
 
 
-    public static VariableSpace branch(VariableSpace variableSpace, boolean fc) {
-        if (variableSpace.solved()) {
-            completeExecution(variableSpace);
-        }
+    public static Results branch(VariableSpace variableSpace, boolean fc, Results results) {
+//        if (variableSpace.solved()) {
+//            try {
+//                return getResults(results, variableSpace, new ArcConsistencyMaintainer(), variableSpace.getConstraints());
+//            } catch (EmptyDomainException e) {
+//                System.out.println("Incorrectly evaluated as finished");
+//            }
+//        }
 
         try {
+            branchLeft(variableSpace, fc, results);
 
-        VariableSpace variableSpace1 = branchLeft(variableSpace, fc);
+            if (results.solved) {
+                return results;
+            }
 
-        if (variableSpace1 != null) {
-            return variableSpace1;
-        }
+            branchRight(variableSpace, fc, results);
 
-        VariableSpace variableSpace2 = branchRight(variableSpace, fc);
-
+            if (results.solved) {
+                return results;
+            }
         } catch (NoAssignableVars noAssignableVars) {
-            completeExecution(variableSpace);
+            try {
+                ArcConsistencyMaintainer arcConsistencyMaintainer = new ArcConsistencyMaintainer();
+                HashMap<Integer, HashMap<Integer, List<BinaryTuple>>> constraints = noAssignableVars.variableSpace.getConstraints();
+                return getResults(results, noAssignableVars.variableSpace, arcConsistencyMaintainer, constraints);
+            } catch (EmptyDomainException ignored) {
+                System.out.println("Incorrectly evaluated as finished");
+            }
         }
 
 //        if (variableSpace2 != null) {
@@ -36,56 +55,47 @@ public class TwoWayBranching {
         return null;
     }
 
-    private static void completeExecution(VariableSpace variableSpace) {
-        System.out.println("Complete assignment: " + variableSpace);
-        variableSpace.printSudoku();
-        System.out.println("\n\n" + (System.nanoTime() - Main.t1) / 1000000000.0);
-        System.exit(200);
+    private static Results getResults(Results results, VariableSpace variableSpace, ArcConsistencyMaintainer arcConsistencyMaintainer, HashMap<Integer, HashMap<Integer, List<BinaryTuple>>> constraints) throws EmptyDomainException {
+        for (int var : constraints.keySet()) {
+            for (int j : constraints.get(var).keySet()) {
+                arcConsistencyMaintainer.revise(var, j, variableSpace);
+            }
+        }
+
+        return completeExecution(variableSpace, results);
     }
 
-    private static VariableSpace branchLeft(VariableSpace space, boolean fc) throws NoAssignableVars {
+    private static Results completeExecution(VariableSpace variableSpace, Results results) {
+        results.finish(variableSpace);
+        return results;
+    }
+
+    private static void branchLeft(VariableSpace space, boolean fc, Results results) throws NoAssignableVars {
         VariableSpace left = space.copy();
-
-
 //            System.out.println("Assigning left: " + left);
-
         int assign = left.assign();
+        results.assign();
 
-        VariableSpace variableSpace;
         if (fc) {
-            variableSpace = ForwardChecker.performForwardChecking(left, assign, fc);
+            ForwardChecker.performForwardChecking(left, assign, fc, results);
         } else {
-            variableSpace = ACThree.performArcConsistency(left, assign, fc);
+            ACThree.performArcConsistency(left, assign, fc, results);
         }
-
-        if (variableSpace != null) {
-            return variableSpace;
-        }
-//            TwoWayBranching.branch(left);
-
-
-        return null;
     }
 
-    private static VariableSpace branchRight(VariableSpace variableSpace, boolean fc) throws NoAssignableVars {
+    private static void branchRight(VariableSpace variableSpace, boolean fc, Results results) throws NoAssignableVars {
         VariableSpace right = variableSpace.copy();
 
 
         int assign = right.inverseAssign();
+        results.inverseAssign();
 
-        VariableSpace variableSpace1;
         if (fc) {
-            variableSpace1 = ForwardChecker.performForwardChecking(right, assign, fc);
+            results = ForwardChecker.performForwardChecking(right, assign, fc, results);
         } else {
-            variableSpace1 = ACThree.performArcConsistency(right, assign, fc);
+            results = ACThree.performArcConsistency(right, assign, fc, results);
         }
 
 
-        if (variableSpace1 != null) {
-            return variableSpace1;
-        }
-
-
-        return null;
     }
 }
