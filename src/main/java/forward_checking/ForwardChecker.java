@@ -23,8 +23,8 @@ public class ForwardChecker {
             }
 
             return TwoWayBranching.branch(space, fc, results);
-        } catch (EmptyDomainException ignored) {}
-
-        return null;
+        } catch (EmptyDomainException e) {
+            return null;
+        }
     }
 }

@@ -15,10 +15,14 @@ public class Variable {
 
     public void assign() {
         Integer first = domain.first();
+        System.out.println("p: " + " (varno=" + varNo + ",val="  + first + ")");
         this.domain = new TreeSet<>(Collections.singleton(first));
     }
 
     public void inverseAssign() {
+        System.out.println("p_rem: " + " (varno=" + varNo + ",val="  + domain.first() + ")");
+
+
         domain.pollFirst();
     }
 
@@ -55,5 +59,9 @@ public class Variable {
 
     public TreeSet<Integer> getDomain() {
         return domain;
+    }
+
+    public int getVarNo() {
+        return varNo;
     }
 }

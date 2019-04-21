@@ -17,7 +17,7 @@ import java.util.List;
 public class TestGlobalArcConsistency {
 
 
-    private static final String SOLUTION_DIR = "solutions2/";
+    private static final String SOLUTION_DIR = "solutions/";
     private static final String PROBLEMS_DIR = "problems/";
     private static final String QUEENS_4 = "4Queens.csp";
     private static final String QUEENS_6 = "6Queens.csp";

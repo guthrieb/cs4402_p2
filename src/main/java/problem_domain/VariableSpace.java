@@ -2,7 +2,10 @@ package problem_domain;
 
 import premade.BinaryTuple;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class VariableSpace {
     private HashMap<Integer, Variable> vars = new HashMap<>();
@@ -28,6 +31,7 @@ public class VariableSpace {
     }
 
     public int assign() throws NoAssignableVars {
+
         Variable minSizeVar = getMinDomainVariable();
 
         if (minSizeVar != null) {
@@ -54,20 +58,17 @@ public class VariableSpace {
     private Variable getMinDomainVariable() {
         int minSize = Integer.MAX_VALUE;
         Variable minSizeVar = null;
+        int lowestVarNo = Integer.MAX_VALUE;
 
-
-        Iterator<Variable> iterator = unassignedVars.iterator();
-        while (iterator.hasNext()) {
-
-            Variable variable = iterator.next();
-
-
-            if (variable.getDomainSize() == 1) {
-                iterator.remove();
-                assignedVars.add(variable);
-            } else if (variable.getDomainSize() < minSize) {
+        for (Variable variable : unassignedVars) {
+            if (variable.getDomainSize() < minSize) {
                 minSize = variable.getDomainSize();
                 minSizeVar = variable;
+            }
+
+            if (variable.getDomainSize() == minSize && variable.getVarNo() < lowestVarNo) {
+                minSizeVar = variable;
+                lowestVarNo = variable.getVarNo();
             }
         }
         return minSizeVar;
@@ -109,17 +110,14 @@ public class VariableSpace {
 //    }
 
     public VariableSpace copy() {
-
-
         HashMap<Integer, Variable> newVars = new HashMap<>();
         HashSet<Variable> newUnassigned = new HashSet<>();
-        HashSet<Variable> newAssigned= new HashSet<>();
+        HashSet<Variable> newAssigned = new HashSet<>();
 
-        for(Map.Entry<Integer, Variable> variableEntry : vars.entrySet()) {
+        for (Map.Entry<Integer, Variable> variableEntry : vars.entrySet()) {
             Variable varCopy = variableEntry.getValue().copy();
 
-
-            if(variableEntry.getValue().getDomainSize() > 1) {
+            if(unassignedVars.contains(variableEntry.getValue())) {
                 newUnassigned.add(varCopy);
             } else {
                 newAssigned.add(varCopy);
@@ -148,8 +146,8 @@ public class VariableSpace {
     }
 
     public void printSudoku() {
-        for(int i = 0; i < vars.size(); i++) {
-            if(i % 9== 0) {
+        for (int i = 0; i < vars.size(); i++) {
+            if (i % 9 == 0) {
                 System.out.println("\n");
             }
 
@@ -160,5 +158,9 @@ public class VariableSpace {
 
     public HashMap<Integer, Variable> getVariables() {
         return vars;
+    }
+
+    public HashSet<Variable> getUnassigned() {
+        return unassignedVars;
     }
 }

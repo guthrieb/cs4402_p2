@@ -17,33 +17,46 @@ public class TwoWayBranching {
 
 
     public static Results branch(VariableSpace variableSpace, boolean fc, Results results) {
-//        if (variableSpace.solved()) {
-//            try {
-//                return getResults(results, variableSpace, new ArcConsistencyMaintainer(), variableSpace.getConstraints());
-//            } catch (EmptyDomainException e) {
-//                System.out.println("Incorrectly evaluated as finished");
-//            }
-//        }
+
+
+
+        if (variableSpace.solved()) {
+            try {
+                return getResults(results, variableSpace, new ArcConsistencyMaintainer(), variableSpace.getConstraints());
+            } catch (EmptyDomainException e) {
+                System.out.println("Incorrectly evaluated as finished");
+            }
+        }
+
 
         try {
+//            System.out.println(variableSpace.getVariables());
+
+//            System.out.println("Branching Left");
+
             branchLeft(variableSpace, fc, results);
 
             if (results.solved) {
-                return results;
+                return results;            //            if (variable.getDomainSize() == 1) {
+//                iterator.remove();
+//                assignedVars.add(variable);
             }
 
+//            System.out.println("Branching Right");
             branchRight(variableSpace, fc, results);
 
-            if (results.solved) {
+            if (results.solved) {            //            if (variable.getDomainSize() == 1) {
+//                iterator.remove();
+//                assignedVars.add(variable);
                 return results;
             }
         } catch (NoAssignableVars noAssignableVars) {
+            System.out.println("No assignable vars");
             try {
                 ArcConsistencyMaintainer arcConsistencyMaintainer = new ArcConsistencyMaintainer();
                 HashMap<Integer, HashMap<Integer, List<BinaryTuple>>> constraints = noAssignableVars.variableSpace.getConstraints();
                 return getResults(results, noAssignableVars.variableSpace, arcConsistencyMaintainer, constraints);
             } catch (EmptyDomainException ignored) {
-                System.out.println("Incorrectly evaluated as finished");
             }
         }
 
@@ -72,7 +85,7 @@ public class TwoWayBranching {
 
     private static void branchLeft(VariableSpace space, boolean fc, Results results) throws NoAssignableVars {
         VariableSpace left = space.copy();
-//            System.out.println("Assigning left: " + left);
+
         int assign = left.assign();
         results.assign();
 
@@ -87,7 +100,9 @@ public class TwoWayBranching {
         VariableSpace right = variableSpace.copy();
 
 
+//        System.out.println("Pre-UNASSIGNING: " + variableSpace.getUnassigned());
         int assign = right.inverseAssign();
+//        System.out.println("Post-UNASSIGNING: " + right.getUnassigned());
         results.inverseAssign();
 
         if (fc) {

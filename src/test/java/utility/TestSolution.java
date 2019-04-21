@@ -8,10 +8,13 @@ import java.io.IOException;
 import java.util.*;
 
 public class TestSolution {
+
+    public static final String SOLUTIONS_4_QUEENS_CSP = "solutions/4Queens.csp";
+
     @Test
     public void basicTest() throws IOException {
 
-        List<Solution> solutions = Solution.readSolutions("solutions2/4Queens.csp");
+        List<Solution> solutions = Solution.readSolutions(SOLUTIONS_4_QUEENS_CSP);
         System.out.println(solutions);
 
         Variable variable1 = new Variable(0, new TreeSet<>(Collections.singletonList(1)));
@@ -35,7 +38,7 @@ public class TestSolution {
     @Test
     public void basicTest2() throws IOException {
 
-        List<Solution> solutions = Solution.readSolutions("solutions2/4Queens.csp");
+        List<Solution> solutions = Solution.readSolutions(SOLUTIONS_4_QUEENS_CSP);
         System.out.println(solutions);
 
         Variable variable1 = new Variable(0, new TreeSet<>(Collections.singletonList(1)));
@@ -58,7 +61,7 @@ public class TestSolution {
     @Test
     public void basicTest3() throws IOException {
 
-        List<Solution> solutions = Solution.readSolutions("solutions2/4Queens.csp");
+        List<Solution> solutions = Solution.readSolutions(SOLUTIONS_4_QUEENS_CSP);
         System.out.println(solutions);
 
         Variable variable1 = new Variable(0, new TreeSet<>(Collections.singletonList(1)));
@@ -81,7 +84,7 @@ public class TestSolution {
     @Test
     public void basicTest4() throws IOException {
 
-        List<Solution> solutions = Solution.readSolutions("solutions2/4Queens.csp");
+        List<Solution> solutions = Solution.readSolutions(SOLUTIONS_4_QUEENS_CSP);
         System.out.println(solutions);
 
         Variable variable1 = new Variable(0, new TreeSet<>(Arrays.asList(1, 2)));
